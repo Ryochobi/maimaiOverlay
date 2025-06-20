@@ -1,0 +1,20 @@
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  border-bottom: 1px dashed #ccc;
+}
+
+.category-input {
+  font-size: 1.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+}
+
+.category-label {
+  font-size: 1.25rem;
+}

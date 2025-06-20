@@ -1,0 +1,46 @@
+.control-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1.125rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.25rem;
+}
+
+.control-button:hover {
+  background-color: #2563eb;
+}
+
+.control-upload {
+  display: inline-block;
+  background-color: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1.125rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  text-align: center;
+  user-select: none;
+}
+
+.control-upload:hover {
+  background-color: #059669;
+}
+
+.remove-button {
+  background-color: transparent;
+  color: #ef4444;
+  padding: 0.25rem 0.5rem;
+  font-size: 1.25rem;
+  border: none;
+  margin-left: 0.25rem;
+}
+
+.remove-button:hover {
+  color: #dc2626;
+  background-color: rgba(239, 68, 68, 0.1);
+}

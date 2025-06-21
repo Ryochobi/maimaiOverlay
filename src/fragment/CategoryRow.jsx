@@ -1,7 +1,7 @@
 import Button from './Button';
 import './CategoryRow.scss';
 
-export default function CategoryRow({ category, index, onEdit, onSave, onChange }) {
+export default function CategoryRow({ category, index, onEdit, onSave, onChange, onRemove }) {
   return (
     <div className="category-row">
       {category.isEditing ? (
@@ -20,6 +20,9 @@ export default function CategoryRow({ category, index, onEdit, onSave, onChange 
           <Button onClick={() => onEdit(index)}>Edit</Button>
         </>
       )}
+      <Button onClick={() => onRemove(index)} className="remove-button">
+                ✕
+                </Button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import React from 'react';
-import Button from './Button';
-import './FieldRow.scss';
+import React from "react";
+import Button from "./Button";
+import "./FieldRow.scss";
 
 export default function FieldRow({
   field,
@@ -35,7 +35,7 @@ export default function FieldRow({
         const parsed = JSON.parse(evt.target.result);
         onOptionsLoad(index, parsed);
       } catch {
-        alert('Invalid JSON format for dropdown options.');
+        alert("Invalid JSON format for dropdown options.");
       }
     };
     reader.readAsText(file);
@@ -58,51 +58,55 @@ export default function FieldRow({
 
       <select
         className="field-type-select"
-        value={field.type}
+        value={field.fieldType}
         onChange={handleTypeChange}
       >
         <option value="text">text</option>
         <option value="dropdown">dropdown</option>
       </select>
 
-      {field.type === 'dropdown' && field.options ? (
+      {field.fieldType === "dropdown" ? (
         <select
           className="control-input"
-          value={value || ''}
+          value={value || ""}
           onChange={handleValueInputChange}
+          disabled={!field.options || Object.keys(field.options).length === 0}
         >
-          {Object.entries(field.options).map(([label, payload]) => (
-            <option key={label} value={payload}>
-              {label}
-            </option>
-          ))}
+          {field.options && Object.keys(field.options).length > 0 ? (
+            Object.entries(field.options).map(([label, val]) => (
+              <option key={label} value={val}>
+                {label}
+              </option>
+            ))
+          ) : (
+            <option value="">No options loaded</option>
+          )}
         </select>
       ) : (
         <input
           type="text"
           className="control-input"
-          value={value || ''}
+          value={value || ""}
           onChange={handleValueInputChange}
         />
       )}
 
       <div className="field-actions">
-  {field.type === 'dropdown' && (
-    <label className="dropdown-upload">
-      📂
-      <input
-        type="file"
-        accept=".json"
-        style={{ display: 'none' }}
-        onChange={handleOptionsUpload}
-      />
-    </label>
-  )}
-  <Button onClick={handleRemove} className="remove-button">
-    ✕
-  </Button>
-</div>
-
+        {field.fieldType === "dropdown" && (
+          <label className="dropdown-upload">
+            📂
+            <input
+              type="file"
+              accept=".json"
+              style={{ display: "none" }}
+              onChange={handleOptionsUpload}
+            />
+          </label>
+        )}
+        <Button onClick={handleRemove} className="remove-button">
+          ✕
+        </Button>
+      </div>
     </div>
   );
 }

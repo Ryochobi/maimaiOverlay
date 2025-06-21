@@ -163,6 +163,7 @@ const addField = () => {
   return (
     <div className="control-container">
       <div className="control-box side-controls">
+        <span className="header-label">Controls</span>
         <Button onClick={sendUpdate}>Update Overlay</Button>
         <Button onClick={addCategory}>Add Category</Button>
         <Button onClick={addField}>Add Field</Button>
@@ -170,6 +171,7 @@ const addField = () => {
         <Button onClick={handleExport}>Export Config</Button>
       </div>
       <div className="control-box">
+        <span className="header-label">Fields</span>
         <DragDropContext
           onDragEnd={(result) => {
             if (!result.destination) return;

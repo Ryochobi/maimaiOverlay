@@ -42,16 +42,20 @@ function filterSongsByLevel(data, minLevel, maxLevel) {
       })
       .map(sheet => (
         {
-        ...song,
-        ...sheet,
-        sheets: undefined,
-        isNew: undefined,
-        comment: undefined,
-        releaseDate: undefined,
-        regions: undefined,
-        regionOverrides: undefined,
-        isSpecial: undefined,
-        levelValue: undefined
+        id: song.songId,
+        values: {
+          ...song,
+          ...sheet,
+          songId: undefined,
+          sheets: undefined,
+          isNew: undefined,
+          comment: undefined,
+          releaseDate: undefined,
+          regions: undefined,
+          regionOverrides: undefined,
+          isSpecial: undefined,
+          levelValue: undefined
+        }
       }));
   });
 }
@@ -67,8 +71,9 @@ fetchJson(jsonUrl, (err, data) => {
     return;
   }
 
-  let songData = filterSongsByLevel(data[propertyToExtract],config.minLevel, config.maxLevel).filter(song => config.difficulties.includes(song.difficulty) ||
-    song.type == 'utage');
+  console.log(filterSongsByLevel(data[propertyToExtract],config.minLevel, config.maxLevel))
+  let songData = filterSongsByLevel(data[propertyToExtract],config.minLevel, config.maxLevel).filter(song => config.difficulties.includes(song.values.difficulty) ||
+    song.values.type == 'utage');
 
   fs.writeFileSync(outputFile, JSON.stringify(songData, null, 2));
   console.log(`✅ Extracted "${propertyToExtract}" from ${jsonUrl} items into ${outputFile}`);

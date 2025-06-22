@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./Control.scss";
 import Button from "../fragment/Button";
 import FileUpload from "../fragment/FileUpload";
 import FieldRow from "../fragment/FieldRow";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoryRow from "../fragment/CategoryRow";
+import config from "../config";
 
 export default function Control() {
   const [fields, setFields] = useState([
@@ -16,7 +17,7 @@ export default function Control() {
   {
     type: "field",
     name: "Player 1",
-    fieldType: "text", // "text" or "dropdown"
+    fieldType: "text",
   },
   {
     type: "field",
@@ -42,13 +43,11 @@ export default function Control() {
 ]);
   const [values, setValues] = useState({});
   let ws = useRef(null);
-  console.log(values)
-
   const sendUpdate = () => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(values));
     } else {
-      ws.current = new WebSocket("ws://localhost:8080/control");
+      ws.current = new WebSocket(config.websocketUrl);
       ws.current.onopen = () => {
         ws.current.send(JSON.stringify(values));
       };

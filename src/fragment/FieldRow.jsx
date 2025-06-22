@@ -1,6 +1,6 @@
-import React from "react";
 import Button from "./Button";
 import "./FieldRow.scss";
+import config from "../config";
 
 export default function FieldRow({
   field,
@@ -23,7 +23,7 @@ export default function FieldRow({
     const selectedOption = field?.options?.find((opt) => opt.id === selectedId);
           onValueChange(field.name, selectedId); // fallback if no `values`
  if (selectedOption?.values) {
-    const ws = new WebSocket("ws://localhost:8080/control");
+    const ws = new WebSocket(config.websocketUrl);
     ws.onopen = () => {
       ws.send(JSON.stringify({ [field.name]: selectedOption.values }));
       ws.close();
@@ -83,6 +83,7 @@ export default function FieldRow({
             <option value="">Select...</option>
           {field.options && field.options.length > 0 ? (
             field.options.map((f, i) => {
+              // Logic is used mainly for maimai title - difficulty - type concatenation
               const label = f.values
                 ? `${f.values.title} - ${
                     f.values.difficulty?.toUpperCase() || ""

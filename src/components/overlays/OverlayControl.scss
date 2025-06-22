@@ -29,39 +29,6 @@
   user-select: none;
 }
 
-.field-text {
-  display: inline-block;
-  max-width: 85%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.field-close {
-  position: absolute;
-  top: 0.2rem;
-  right: 0.4rem;
-  background: transparent;
-  color: #333;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.editor-actions {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  display: flex;
-  gap: 1rem;
-  background: #1f1f1f;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  z-index: 100;
-}
-
 .editor-actions button,
 .import-btn,
 .background-upload {

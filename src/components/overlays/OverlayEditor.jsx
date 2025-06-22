@@ -1,4 +1,3 @@
-// === File: OverlayEditor.jsx ===
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Draggable from "react-draggable";
@@ -80,7 +79,7 @@ export default function OverlayEditor() {
     reader.readAsText(file);
   };
 
-  const handleBackgroundUpload = (e) => {
+const handleBackgroundUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -88,7 +87,6 @@ export default function OverlayEditor() {
     reader.readAsDataURL(file);
   };
 
-  const handleHideField = (key) => setHiddenKeys((prev) => [...prev, key]);
   const restoreFields = () => setHiddenKeys([]);
 
   if (!config?.values) return <div>Loading overlay config...</div>;
@@ -96,8 +94,24 @@ export default function OverlayEditor() {
   return (
     <div
       className="editor-container"
-      style={background ? { backgroundImage: `url(${background})`, backgroundSize: "cover" } : {}}
     >
+      {/* Action bar pinned to top-left */}
+      <div className="editor-actions">
+        <label className="background-upload">
+          🖼 Upload Background
+          <input type="file" accept="image/*" onChange={handleBackgroundUpload} hidden />
+        </label>
+        <button onClick={handleSave}>💾 Save Overlay</button>
+        <label className="import-btn">
+          📂 Import Config
+          <input type="file" accept=".json" onChange={handleImport} hidden />
+        </label>
+        <button onClick={handleExport}>⬇ Export Config</button>
+        <button onClick={restoreFields}>↩ Restore Fields</button>
+        <button onClick={() => navigate("/overlay")}>🔙 Back</button>
+      </div>
+      <div className="editor-canvas" style={background ? { backgroundImage: `url(${background})`, backgroundSize: "cover" } : {}}>
+        {/* Render draggable fields */}
       {Object.entries(config.values).map(([key, value]) => {
         if (hiddenKeys.includes(key)) return null;
         const pos = positions[key] || { x: 100, y: 100 };
@@ -117,7 +131,7 @@ export default function OverlayEditor() {
               <button
                 className="field-close"
                 title="Hide this field"
-                onClick={() => handleHideField(key)}
+                onClick={() => setHiddenKeys((prev) => [...prev, key])}
               >
                 ×
               </button>
@@ -126,18 +140,6 @@ export default function OverlayEditor() {
         );
       })}
 
-      <div className="editor-actions">
-        <button onClick={handleSave}>💾 Save</button>
-        <button onClick={handleExport}>⬇ Export Config</button>
-        <label className="import-btn">
-          📂 Import Config
-          <input type="file" accept=".json" onChange={handleImport} hidden />
-        </label>
-        <label className="background-upload">
-          🖼 Upload Background
-          <input type="file" accept="image/*" onChange={handleBackgroundUpload} hidden />
-        </label>
-        <button onClick={restoreFields}>↩ Restore Fields</button>
       </div>
     </div>
   );

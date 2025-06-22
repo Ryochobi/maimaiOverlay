@@ -1,0 +1,67 @@
+// === File: editor.scss ===
+
+.editor-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #121212;
+  color: white;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.editor-field {
+  position: absolute;
+  padding: 0.5rem 1rem;
+  background-color: #ffffffcc;
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  cursor: move;
+  max-width: 30rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.editor-actions {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 1rem;
+  background: #1f1f1f;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.editor-actions button,
+.import-btn,
+.background-upload {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editor-actions button:hover,
+.import-btn:hover,
+.background-upload:hover {
+  background-color: #1d4ed8;
+}
+
+.import-btn input,
+.background-upload input {
+  display: none;
+}

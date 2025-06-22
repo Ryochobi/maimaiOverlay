@@ -17,18 +17,16 @@ export default function Control() {
     type: "field",
     name: "Player 1",
     fieldType: "text", // "text" or "dropdown"
-    value: "",
   },
   {
     type: "field",
     name: "Character",
     fieldType: "dropdown",
-    value: "",
-    options: {
-      "Mario": "mario",
-      "Luigi": "luigi",
-      "Peach": "peach"
-    }
+    options: [
+      {id: "Mario"},
+      {id: "Luigi"},
+      {id: "Peach"},
+    ]
   },
   {
     type: "category",
@@ -44,6 +42,7 @@ export default function Control() {
 ]);
   const [values, setValues] = useState({});
   let ws = useRef(null);
+  console.log(values)
 
   const sendUpdate = () => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -95,7 +94,7 @@ export default function Control() {
     setFields(updatedFields);
   };
 
-  const handleValueChange = (name, newValue) => {
+  const handleValueChange = (name, newValue, data = null, dropdown = false) => {
     setValues({ ...values, [name]: newValue });
   };
 

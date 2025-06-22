@@ -19,7 +19,16 @@ export default function FieldRow({
   };
 
   const handleValueInputChange = (e) => {
-    onValueChange(field.name, e.target.value);
+    const selectedId = e.target.value;
+    const selectedOption = field?.options?.find((opt) => opt.id === selectedId);
+          onValueChange(field.name, selectedId); // fallback if no `values`
+ if (selectedOption?.values) {
+    const ws = new WebSocket("ws://localhost:8080/control");
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ [field.name]: selectedOption.values }));
+      ws.close();
+    };
+  }
   };
 
   const handleTypeChange = (e) => {
@@ -70,14 +79,21 @@ export default function FieldRow({
           className="control-input"
           value={value || ""}
           onChange={handleValueInputChange}
-          disabled={!field.options || Object.keys(field.options).length === 0}
         >
-          {field.options && Object.keys(field.options).length > 0 ? (
-            Object.entries(field.options).map(([label, val]) => (
-              <option key={label} value={val}>
-                {label}
-              </option>
-            ))
+            <option value="">Select...</option>
+          {field.options && field.options.length > 0 ? (
+            field.options.map((f, i) => {
+              const label = f.values
+                ? `${f.values.title} - ${
+                    f.values.difficulty?.toUpperCase() || ""
+                  } - ${f.values.type?.toUpperCase() || ""}`
+                : f.id;
+              return (
+                <option key={i} value={f.id}>
+                  {label}
+                </option>
+              );
+            })
           ) : (
             <option value="">No options loaded</option>
           )}

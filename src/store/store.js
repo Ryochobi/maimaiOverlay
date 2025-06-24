@@ -1,5 +1,27 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 
+const fieldsSlice = createSlice({
+  name: 'fields',
+  initialState: {
+    songFields: {},
+    fields: {},
+  },
+  reducers: {
+     setSongFields: (state, action) => {
+      state.songFields = {
+          ...state.songInformation,
+          ...action.payload.songInformation,
+      };
+    },
+    setFields: (state, action) => {
+      state.fields = {
+          ...state.fields,
+          ...action.payload.fields,
+      };
+    },
+  }
+});
+
 const overlaySlice = createSlice({
   name: 'overlay',
   initialState: {
@@ -19,11 +41,13 @@ const overlaySlice = createSlice({
   },
 });
 
+export const { setSongFields, setFields } = fieldsSlice.actions;
 export const { updateData, hide } = overlaySlice.actions;
 
 const store = configureStore({
   reducer: {
     overlay: overlaySlice.reducer,
+    fields: fieldsSlice.reducer
   },
 });
 

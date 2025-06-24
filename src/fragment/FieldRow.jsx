@@ -1,6 +1,5 @@
 import Button from "./Button";
 import "./FieldRow.scss";
-import config from "../config";
 
 export default function FieldRow({
   field,
@@ -12,23 +11,13 @@ export default function FieldRow({
   onTypeChange,
   onOptionsLoad,
 }) {
-  // === Handlers ===
-
   const handleNameInputChange = (e) => {
     onNameChange(index, e.target.value);
   };
 
   const handleValueInputChange = (e) => {
     const selectedId = e.target.value;
-    const selectedOption = field?.options?.find((opt) => opt.id === selectedId);
-          onValueChange(field.name, selectedId); // fallback if no `values`
- if (selectedOption?.values) {
-    const ws = new WebSocket(config.websocketUrl);
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ [field.name]: selectedOption.values }));
-      ws.close();
-    };
-  }
+    onValueChange(field.name, selectedId); // fallback if no `values`
   };
 
   const handleTypeChange = (e) => {
@@ -53,8 +42,6 @@ export default function FieldRow({
   const handleRemove = () => {
     onRemove(index);
   };
-
-  // === Render ===
 
   return (
     <div className="field-row">

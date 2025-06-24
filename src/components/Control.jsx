@@ -1,57 +1,28 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "./Control.scss";
 import Button from "../fragment/Button";
 import FileUpload from "../fragment/FileUpload";
 import FieldRow from "../fragment/FieldRow";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoryRow from "../fragment/CategoryRow";
-import config from "../config";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedSong, updateFields } from "../redux/store";
+import maimaiFields from "../maimaiField.json"
 
 export default function Control() {
-  const [fields, setFields] = useState([
-  {
-    type: "category",
-    name: "Team A",
-    isEditing: false
-  },
-  {
-    type: "field",
-    name: "Player 1",
-    fieldType: "text",
-  },
-  {
-    type: "field",
-    name: "Character",
-    fieldType: "dropdown",
-    options: [
-      {id: "Mario"},
-      {id: "Luigi"},
-      {id: "Peach"},
-    ]
-  },
-  {
-    type: "category",
-    name: "Team B",
-    isEditing: false
-  },
-  {
-    type: "field",
-    name: "Player 2",
-    fieldType: "text",
-    value: ""
-  }
-]);
+  const dispatch = useDispatch();
+  const songs = useSelector((state) => state.songs.songs);
+
+
+  const [fields, setFields] = useState(maimaiFields);
   const [values, setValues] = useState({});
-  let ws = useRef(null);
+
   const sendUpdate = () => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify(values));
-    } else {
-      ws.current = new WebSocket(config.websocketUrl);
-      ws.current.onopen = () => {
-        ws.current.send(JSON.stringify(values));
-      };
+    const selectedSong = songs.find((song) => song.id === values.selectedSong);
+    if (selectedSong) {
+      dispatch(setSelectedSong(selectedSong));
     }
+    dispatch(updateFields(values));
   };
 
   const handleExport = () => {
@@ -75,7 +46,6 @@ export default function Control() {
       updatedValues[newName] = updatedValues[oldName];
       delete updatedValues[oldName];
     }
-
     setFields(updatedFields);
     setValues(updatedValues);
   };
@@ -84,8 +54,7 @@ export default function Control() {
   const updated = [...fields];
   updated[index].fieldType = newType;
   setFields(updated);
-};
-
+  };
 
   const handleOptionsLoad = (index, options) => {
     const updatedFields = [...fields];
@@ -93,7 +62,7 @@ export default function Control() {
     setFields(updatedFields);
   };
 
-  const handleValueChange = (name, newValue, data = null, dropdown = false) => {
+  const handleValueChange = (name, newValue) => {
     setValues({ ...values, [name]: newValue });
   };
 

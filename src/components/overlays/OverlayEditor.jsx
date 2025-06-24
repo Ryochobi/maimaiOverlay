@@ -1,125 +1,225 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Draggable from "react-draggable";
 import "./OverlayEditor.scss";
 import FontToolbar from "../fragment/FontToolbar";
+import { useDispatch, useSelector } from "react-redux";
+import { setFields, setSongFields } from "../../store/store";
 
 export default function OverlayEditor() {
   const { name } = useParams();
   const navigate = useNavigate();
-
-  const [config, setConfig] = useState(null);
-  const [positions, setPositions] = useState({});
+  const dispatch = useDispatch();
+  
+  // State management
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [backgroundUrl, setBackgroundUrl] = useState("");
   const [background, setBackground] = useState(null);
   const [hiddenKeys, setHiddenKeys] = useState([]);
-  const refMap = useRef({});
   const [selectedKey, setSelectedKey] = useState(null);
   const [styles, setStyles] = useState({});
-  
-  const handleStyleChange = (fieldKey, property, value) => {
-  setStyles(prev => ({
-    ...prev,
-    [fieldKey]: {
-      ...prev[fieldKey],
-      [property]: value
-    }
-  }));
-};
+  const [positions, setPositions] = useState({});
+  const refMap = useRef({});
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Redux state
+  const fields = useSelector((state) => state.fields.fields);
+  const songFields = useSelector((state) => state.fields.songFields);
+  const totalFields = {...songFields, ...fields};
+
+  // Helper to get default position
+  const getDefaultPosition = useCallback((key) => {
+    const keys = Object.keys(totalFields);
+    const index = keys.indexOf(key);
+    return {
+      x: 100 + (index * 30),
+      y: 100 + (index * 30)
+    };
+  }, [totalFields]);
+
+  // Load config from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(`overlay-${name}`);
     if (stored) {
-      const parsed = JSON.parse(stored);
-      setConfig(parsed);
-      setPositions(parsed.positions || {});
-      setHiddenKeys(parsed.hiddenKeys || []);
-      setBackground(parsed.background || null);
-      setStyles(parsed.styles || {});
+      try {
+        const parsed = JSON.parse(stored);
+        setHiddenKeys(parsed.hiddenKeys || []);
+        setBackground(parsed.background || null);
+        setStyles(parsed.styles || {});
+        
+        // Initialize positions with safety checks
+        if (parsed.positions) {
+          const safePositions = {};
+          Object.entries(parsed.positions).forEach(([key, pos]) => {
+            if (pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+              safePositions[key] = { x: pos.x, y: pos.y };
+            }
+          });
+          setPositions(safePositions);
+        }
+      } catch (error) {
+        console.error("Failed to load saved config:", error);
+      }
     }
+    setIsInitialized(true);
   }, [name]);
 
+  // Handle WebSocket updates
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:8080/overlay");
-    ws.onmessage = async (event) => {
+    ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        setConfig((prev) => {
-          const updated = { ...prev, values: { ...prev?.values, ...data } };
-          localStorage.setItem(`overlay-${name}`, JSON.stringify(updated));
-          return updated;
-        });
+        dispatch(setFields(data.fields));
+        dispatch(setSongFields(data.songInformation));
       } catch (err) {
-        console.error("Invalid message received in editor:", err);
+        console.error("Invalid WebSocket message:", err);
       }
     };
     return () => ws.close();
-  }, [name]);
+  }, [name, dispatch]);
 
-  const handleDragStop = (key, _, data) => {
-    setPositions((prev) => ({ ...prev, [key]: { x: data.x, y: data.y } }));
-  };
+  // Initialize positions when fields are available
+  useEffect(() => {
+    if (isInitialized && Object.keys(totalFields).length > 0) {
+      const newPositions = {...positions};
+      let needsUpdate = false;
+      
+      Object.keys(totalFields).forEach(key => {
+        if (!newPositions[key] || 
+            typeof newPositions[key].x !== 'number' || 
+            typeof newPositions[key].y !== 'number') {
+          newPositions[key] = getDefaultPosition(key);
+          needsUpdate = true;
+        }
+      });
+      
+      if (needsUpdate) {
+        setPositions(newPositions);
+      }
+    }
+  }, [totalFields, isInitialized, getDefaultPosition]);
 
-  const handleSave = () => {
-    const updated = { ...config, positions, background, hiddenKeys, styles };
-    localStorage.setItem(`overlay-${name}`, JSON.stringify(updated));
-    navigate("/overlay");
-  };
+  // Style handler
+  const handleStyleChange = useCallback((fieldKey, property, value) => {
+    setStyles(prev => ({
+      ...prev,
+      [fieldKey]: {
+        ...prev[fieldKey],
+        [property]: value
+      }
+    }));
+  }, []);
 
-  const handleExport = () => {
-    const blob = new Blob(
-      [JSON.stringify({ positions, background, hiddenKeys, styles }, null, 2)],
-      { type: "application/json" }
-    );
+  // Drag handler with position validation
+  const handleDragStop = useCallback((key, _, data) => {
+    setPositions(prev => ({
+      ...prev,
+      [key]: {
+        x: Number.isFinite(data.x) ? data.x : prev[key]?.x || 100,
+        y: Number.isFinite(data.y) ? data.y : prev[key]?.y || 100
+      }
+    }));
+  }, []);
+
+  // Background image handlers
+  const handleBackgroundUrlSubmit = useCallback(() => {
+    if (backgroundUrl) {
+      setBackground(backgroundUrl);
+      setShowUrlInput(false);
+      setBackgroundUrl("");
+    }
+  }, [backgroundUrl]);
+
+  const handleBackgroundUrlChange = useCallback((e) => {
+    setBackgroundUrl(e.target.value);
+  }, []);
+
+  // File operations
+  const handleSave = useCallback(() => {
+    const configToSave = {
+      positions,
+      background,
+      hiddenKeys,
+      styles
+    };
+    
+    // Save to localStorage
+    localStorage.setItem(`overlay-${name}`, JSON.stringify(configToSave));
+    
+    // Download file
+    const blob = new Blob([JSON.stringify(configToSave, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = url;
     a.download = `overlay-${name}-config.json`;
     a.click();
-    URL.revokeObjectURL(a.href);
-  };
+    URL.revokeObjectURL(url);
+    
+    navigate("/overlay");
+  }, [positions, background, hiddenKeys, styles, name, navigate]);
 
-  const handleImport = (e) => {
+  const handleImport = useCallback((e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
     const reader = new FileReader();
     reader.onload = ({ target }) => {
       try {
         const imported = JSON.parse(target.result);
-        setPositions(imported.positions || {});
-        setBackground(imported.background || null);
+        const safePositions = {};
+        
+        // Validate and sanitize positions
+        if (imported.positions) {
+          Object.entries(imported.positions).forEach(([key, pos]) => {
+            if (pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+              safePositions[key] = { x: pos.x, y: pos.y };
+            }
+          });
+        }
+        
+        setPositions(safePositions);
         setHiddenKeys(imported.hiddenKeys || []);
+        setBackground(imported.background || null);
         setStyles(imported.styles || {});
       } catch {
-        alert("Invalid JSON file.");
+        alert("Invalid config file. Please check the format.");
       }
     };
     reader.readAsText(file);
-  };
+  }, []);
 
-  const handleBackgroundUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ({ target }) => setBackground(target.result);
-    reader.readAsDataURL(file);
-  };
+  const handleExport = useCallback(() => {
+    const configToExport = {
+      positions,
+      background,
+      hiddenKeys,
+      styles
+    };
+    
+    const blob = new Blob(
+      [JSON.stringify(configToExport, null, 2)],
+      { type: "application/json" }
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `overlay-${name}-export.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [positions, background, hiddenKeys, styles, name]);
 
-  const restoreFields = () => setHiddenKeys([]);
+  // Field management
+  const restoreFields = useCallback(() => setHiddenKeys([]), []);
 
-  if (!config?.values) return <div>Loading overlay config...</div>;
+  if (!isInitialized || Object.keys(totalFields).length === 0) {
+    return <div className="loading-message">Loading overlay data...</div>;
+  }
 
   return (
     <div className="editor-container">
-      {/* Action bar pinned to top-left */}
       <div className="editor-actions">
-        <label className="background-upload">
-          🖼 Upload Background
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleBackgroundUpload}
-            hidden
-          />
-        </label>
+        <button onClick={() => setShowUrlInput(true)}>🖼 Set Background Image</button>
         <button onClick={handleSave}>💾 Save Overlay</button>
         <label className="import-btn">
           📂 Import Config
@@ -129,50 +229,74 @@ export default function OverlayEditor() {
         <button onClick={restoreFields}>↩ Restore Fields</button>
         <button onClick={() => navigate("/overlay")}>🔙 Back</button>
       </div>
-      {selectedKey && (
-        <FontToolbar selectedKey={selectedKey} styles={styles} onStyleChange={handleStyleChange}/>
+
+      {showUrlInput && (
+        <div className="url-popup">
+          <div className="url-popup-content">
+            <h3>Enter Image URL</h3>
+            <input
+              type="text"
+              value={backgroundUrl}
+              onChange={handleBackgroundUrlChange}
+              placeholder="https://example.com/image.jpg"
+            />
+            <div className="url-popup-buttons">
+              <button onClick={handleBackgroundUrlSubmit}>Set Background</button>
+              <button onClick={() => setShowUrlInput(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
+
+      {selectedKey && (
+        <FontToolbar 
+          selectedKey={selectedKey} 
+          styles={styles} 
+          onStyleChange={handleStyleChange}
+        />
+      )}
+
       <div className="editor-canvas-wrapper">
         <div
           className="editor-canvas"
-          style={
-            background
-              ? {
-                  backgroundImage: `url(${background})`,
-                  backgroundSize: "cover",
-                }
-              : {}
-          }
+          style={background ? {
+            backgroundImage: `url(${background})`,
+            backgroundSize: "cover"
+          } : {}}
         >
-          {/* Render draggable fields */}
-          {Object.entries(config.values).map(([key, value]) => {
+          {Object.entries(totalFields).map(([key, value]) => {
             if (hiddenKeys.includes(key)) return null;
-            const pos = positions[key] || { x: 100, y: 100 };
-            const displayText =
-              typeof value === "object" ? JSON.stringify(value) : value;
+            
+            if (!refMap.current[key]) {
+              refMap.current[key] = React.createRef();
+            }
 
-            if (!refMap.current[key]) refMap.current[key] = React.createRef();
+            // Always ensure we have valid position
+            const pos = positions[key] || getDefaultPosition(key);
 
             return (
               <Draggable
                 key={key}
                 nodeRef={refMap.current[key]}
-                defaultPosition={pos}
+                position={pos}
                 onStop={(e, data) => handleDragStop(key, e, data)}
               >
                 <div
-                  className={`editor-field ${
-                    selectedKey === key ? "selected" : ""
-                  }`}
+                  className={`editor-field ${selectedKey === key ? "selected" : ""}`}
                   ref={refMap.current[key]}
                   onClick={() => setSelectedKey(key)}
                   style={styles[key] || {}}
                 >
-                  <span className="field-text">{displayText}</span>
+                  <span className="field-text">
+                    {key}
+                  </span>
                   <button
                     className="field-close"
                     title="Hide this field"
-                    onClick={() => setHiddenKeys((prev) => [...prev, key])}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHiddenKeys(prev => [...prev, key]);
+                    }}
                   >
                     ×
                   </button>

@@ -7,16 +7,16 @@ const fieldsSlice = createSlice({
     fields: {},
   },
   reducers: {
-     setSongFields: (state, action) => {
+    setSongFields: (state, action) => {
       state.songFields = {
           ...state.songInformation,
-          ...action.payload.songInformation,
+          ...action.payload,
       };
     },
     setFields: (state, action) => {
       state.fields = {
           ...state.fields,
-          ...action.payload.fields,
+          ...action.payload,
       };
     },
   }

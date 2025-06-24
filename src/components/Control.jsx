@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./Control.scss";
 import Button from "../fragment/Button";
 import FileUpload from "../fragment/FileUpload";
@@ -7,22 +7,41 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoryRow from "../fragment/CategoryRow";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedSong, updateFields } from "../redux/store";
-import maimaiFields from "../maimaiField.json"
+import maimaiFields from "../maimaiField.json";
+import config from "../config";
 
 export default function Control() {
   const dispatch = useDispatch();
   const songs = useSelector((state) => state.songs.songs);
 
-
   const [fields, setFields] = useState(maimaiFields);
   const [values, setValues] = useState({});
+  let ws = useRef(null);
 
   const sendUpdate = () => {
-    const selectedSong = songs.find((song) => song.id === values.selectedSong);
-    if (selectedSong) {
-      dispatch(setSelectedSong(selectedSong));
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      dispatch(updateFields(values));
+      const selectedSong = songs.find(
+        (song) => song.id === values.selectedSong
+      );
+      if (selectedSong) {
+        dispatch(setSelectedSong(selectedSong));
+      }
+      ws.current.send(JSON.stringify({songInformation: {...selectedSong, ...selectedSong.values, values: undefined}, fields:values}));
+
+    } else {
+      ws.current = new WebSocket(config.websocketUrl);
+      ws.current.onopen = () => {
+        dispatch(updateFields(values));
+        const selectedSong = songs.find(
+          (song) => song.id === values.selectedSong
+        );
+        if (selectedSong) {
+          dispatch(setSelectedSong(selectedSong));
+        }
+      ws.current.send(JSON.stringify({songInformation: {...selectedSong, ...selectedSong.values, values: undefined}, fields:values}));
+      };
     }
-    dispatch(updateFields(values));
   };
 
   const handleExport = () => {
@@ -51,9 +70,9 @@ export default function Control() {
   };
 
   const handleTypeChange = (index, newType) => {
-  const updated = [...fields];
-  updated[index].fieldType = newType;
-  setFields(updated);
+    const updated = [...fields];
+    updated[index].fieldType = newType;
+    setFields(updated);
   };
 
   const handleOptionsLoad = (index, options) => {
@@ -83,18 +102,17 @@ export default function Control() {
     }
   };
 
-const addField = () => {
-  setFields([
-    ...fields,
-    {
-      type: 'field',       // stays 'field'
-      name: `Field ${fields.length + 1}`,
-      fieldType: 'text',   // editable by dropdown
-      value: ''
-    }
-  ]);
-};
-
+  const addField = () => {
+    setFields([
+      ...fields,
+      {
+        type: "field", // stays 'field'
+        name: `Field ${fields.length + 1}`,
+        fieldType: "text", // editable by dropdown
+        value: "",
+      },
+    ]);
+  };
 
   const addCategory = () => {
     setFields([
@@ -122,10 +140,10 @@ const addField = () => {
   };
 
   const handleRemoveCategory = (index) => {
-  const updated = [...fields];
-  updated.splice(index, 1);
-  setFields(updated);
-};
+    const updated = [...fields];
+    updated.splice(index, 1);
+    setFields(updated);
+  };
 
   return (
     <div className="control-container">

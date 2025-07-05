@@ -7,12 +7,28 @@ const songsSlice = createSlice({
     name: 'songs',
     initialState: {
         songs: songData,
-        selectedSong: null
+        currentSong: null,
+        song1: null,
+        song2: null,
+        song3: null,
+        song4: null
     },
     reducers: {
-        setSelectedSong: (state, action) => {
-            state.selectedSong = action.payload;
+        setCurrentSong: (state, action) => {
+            state.currentSong = action.payload;
         },
+        setSelectedSong1: (state, action) => {
+            state.song1 = action.payload;
+        },
+        setSelectedSong2: (state, action) => {
+            state.song2 = action.payload;
+        },
+        setSelectedSong3: (state, action) => {
+            state.song3 = action.payload;
+        },
+        setSelectedSong4: (state, action) => {
+            state.song4 = action.payload;
+        }
     }
 })
 
@@ -31,34 +47,15 @@ const fieldsSlice = createSlice({
     }
 })
 
-// const overlaySlice = createSlice({
-//   name: 'overlay',
-//   initialState: {
-//     data: {},
-//     visible: false,
-//   },
-//   reducers: {
-    
-//     hide: (state) => {
-//       state.visible = false;
-//     },
-//     updateOverlayValues: (state, action) => {
-//       state.values = action.payload;
-//     }
-//   },
-// });
-
-// export const { hide, updateOverlayValues } = overlaySlice.actions;
 export const { updateFields } = fieldsSlice.actions;
-export const { setSelectedSong } = songsSlice.actions;
+export const { setCurrentSong, setSelectedSong1, setSelectedSong2, setSelectedSong3, setSelectedSong4 } = songsSlice.actions;
 
 
 export const store = configureStore({
   reducer: {
     songs: songsSlice.reducer,
     fields: fieldsSlice.reducer,
-    // overlay: overlaySlice.reducer,
-  },
+  }
 });
 
 export default store;

@@ -1,58 +1,38 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "./Control.scss";
 import Button from "../fragment/Button";
-import FileUpload from "../fragment/FileUpload";
 import FieldRow from "../fragment/FieldRow";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoryRow from "../fragment/CategoryRow";
-import { useDispatch, useSelector } from "react-redux";
-import { setSelectedSong, updateFields } from "../redux/store";
+import { useSelector } from "react-redux";
 import maimaiFields from "../maimaiField.json";
 import config from "../config";
 
 export default function Control() {
-  const dispatch = useDispatch();
-  const songs = useSelector((state) => state.songs.songs);
+  const currentSong = useSelector((state) => state.songs.currentSong);
+  const song1 = useSelector((state) => state.songs.song1);
+  const song2 = useSelector((state) => state.songs.song2);
+  const song3 = useSelector((state) => state.songs.song3);
+  const song4 = useSelector((state) => state.songs.song4);
+
 
   const [fields, setFields] = useState(maimaiFields);
   const [values, setValues] = useState({});
-  let ws = useRef(null);
+  const ws = new WebSocket(config.websocketUrl);
 
   const sendUpdate = () => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      dispatch(updateFields(values));
-      const selectedSong = songs.find(
-        (song) => song.id === values.selectedSong
-      );
-      if (selectedSong) {
-        dispatch(setSelectedSong(selectedSong));
-      }
-      ws.current.send(JSON.stringify({songInformation: {...selectedSong, ...selectedSong.values, values: undefined}, fields:values}));
-
-    } else {
-      ws.current = new WebSocket(config.websocketUrl);
-      ws.current.onopen = () => {
-        dispatch(updateFields(values));
-        const selectedSong = songs.find(
-          (song) => song.id === values.selectedSong
-        );
-        if (selectedSong) {
-          dispatch(setSelectedSong(selectedSong));
-        }
-      ws.current.send(JSON.stringify({songInformation: {...selectedSong, ...selectedSong.values, values: undefined}, fields:values}));
-      };
+    console.log(values)
+    console.log(currentSong, song1, song2, song3, song4)
+    const payload = {
+      fields: values,
+      currentSong,
+      song1,
+      song2,
+      song3,
+      song4
     }
-  };
-
-  const handleExport = () => {
-    const config = { fields }; // wrap as object
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: "application/json",
-    });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "control-config.json";
-    link.click();
+    console.log(payload)
+    ws.send(JSON.stringify(payload))
   };
 
   const handleNameChange = (index, newName) => {
@@ -93,34 +73,6 @@ export default function Control() {
     setValues(updatedValues);
   };
 
-  const handleImport = (e) => {
-    const importedFields = e.fields;
-    try {
-      setFields(importedFields);
-    } catch (err) {
-      alert("Invalid config file");
-    }
-  };
-
-  const addField = () => {
-    setFields([
-      ...fields,
-      {
-        type: "field", // stays 'field'
-        name: `Field ${fields.length + 1}`,
-        fieldType: "text", // editable by dropdown
-        value: "",
-      },
-    ]);
-  };
-
-  const addCategory = () => {
-    setFields([
-      ...fields,
-      { type: "category", name: "New Category", isEditing: false },
-    ]);
-  };
-
   const toggleEditCategory = (index) => {
     const updated = [...fields];
     updated[index].isEditing = true;
@@ -150,10 +102,6 @@ export default function Control() {
       <div className="control-box side-controls">
         <span className="header-label">Controls</span>
         <Button onClick={sendUpdate}>Update Overlay</Button>
-        <Button onClick={addCategory}>Add Category</Button>
-        <Button onClick={addField}>Add Field</Button>
-        <FileUpload onUpload={handleImport} />
-        <Button onClick={handleExport}>Export Config</Button>
       </div>
       <div className="control-box">
         <span className="header-label">Fields</span>

@@ -83,5 +83,15 @@
       "type": "field",
       "name": "p4Score",
       "fieldType": "text"
+    },
+    {
+      "type": "category",
+      "name": "Randomizer",
+      "isEditing": false
+    },
+    {
+      "type": "field",
+      "name": "randomToggle",
+      "fieldType": "randomizer"
     }
 ]

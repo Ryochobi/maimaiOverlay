@@ -21,8 +21,6 @@ export default function Control() {
   const ws = new WebSocket(config.websocketUrl);
 
   const sendUpdate = () => {
-    console.log(values)
-    console.log(currentSong, song1, song2, song3, song4)
     const payload = {
       fields: values,
       currentSong,

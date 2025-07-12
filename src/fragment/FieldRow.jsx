@@ -1,5 +1,6 @@
 import SongField from "./SongField";
 import "./FieldRow.scss";
+import RandomizerField from "./RandomizerField";
 
 export default function FieldRow({
   field,
@@ -39,10 +40,13 @@ export default function FieldRow({
       >
         <option value="text">text</option>
         <option value="song">song</option>
+        <option value="randomizer">randomizer</option>
       </select>
 
       {field.fieldType === "song" ? (
         <SongField onValueChange={handleValueInputChange} field={field}/>
+      ) : field.fieldType == "randomizer" ? (
+        <RandomizerField onValueChange={handleValueInputChange} field={field}/>
       ) : (
         <input
           type="text"

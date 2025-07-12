@@ -1,0 +1,32 @@
+.randomizer-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+
+    .container {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .randomizer-buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+    
+    .primary {
+      background-color: #008000;
+    }
+
+    .error {
+      background-color: red;
+    }
+    }
+}
+
+.filter-input {
+    width: 5rem;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+}

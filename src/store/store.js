@@ -38,16 +38,37 @@ const fieldsSlice = createSlice({
     }
 });
 
+const randomizerSlice = createSlice({
+    name: 'randomizer',
+    initialState: {
+        state: null,
+        songs: null,
+    },
+    reducers: {
+        initializeSongs: (state, action) => {
+            state.songs = action.payload;
+        },
+        setWheelState: (state, action) => {
+            state.state = action.payload;
+        },
+    }
+});
+
 export const {
     setCurrentSong,
     setSelectedSong1,setSelectedSong2,setSelectedSong3,setSelectedSong4,
     setFields
 } = fieldsSlice.actions;
 
+export const {
+  initializeSongs,
+  setWheelState
+} = randomizerSlice.actions;
 
 const store = configureStore({
     reducer: {
-        fields: fieldsSlice.reducer
+        fields: fieldsSlice.reducer,
+        randomizer: randomizerSlice.reducer
     },
 });
 

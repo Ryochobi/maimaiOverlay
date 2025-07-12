@@ -1,0 +1,146 @@
+body {
+	background-image: url("../../../public/overlay/Background.png");
+	background-repeat: no-repeat;
+}
+
+/* styles.css or in your component's style */
+@keyframes spinSlow {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@font-face {
+  font-family: Zenmaru;
+  src: url('../../../public/fonts/zenmaru/ZenMaruGothic-Medium.ttf');
+}
+
+.roulette-container {
+	position: absolute;
+	overflow: hidden;
+	margin: 0 auto;
+	width: 1445px;
+	height: 600px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+
+	.container {
+		width: 340px;
+		height: 380px;
+		background-repeat: no-repeat;
+		margin: 5em auto 2em;
+
+		border-radius: 5px 25px 25px 25px;
+		filter: drop-shadow(0 0 0.75rem grey);
+
+		background: white;
+		position: relative;
+	}
+
+	.container::before {
+		content: '';
+		position: absolute;
+		top: -30px;
+		left: 0;
+		width: 120px;
+		height: 35px;
+		border-radius: 25px 0 0 0;
+		clip-path: path("M 0 0 L 150 0 C 70 0, 193 0, 235 999 L 0 90 z");
+	}
+
+	.master::before {
+		background-color: #7118B0;
+	}
+
+	.remaster::before {
+		background-color: #BF95E0;
+
+	}
+
+	.master {
+		background-color: #7118B0;
+	}
+
+
+	.remaster {
+		background-color: #BF95E0;
+	}
+
+	.top-pane {
+		display: flex;
+		flex-direction: row;
+
+		.type-image {
+			position: relative;
+			top: -25px;
+			left: 5px;
+		}
+	}
+
+	.mid-pane {
+    text-align: center;
+
+		.jacket {
+			width: 200px
+		}
+	}
+
+	.bottom-pane {
+		background-color: #9F5FD0;
+		margin-top: 1rem;
+    	text-align: center;
+
+		span {
+			font-size: 1.5rem;
+			font-weight: bold;
+			color: white;
+			font-family: sans-serif;
+			display: block;
+		}
+	}
+}
+
+carousel-card {
+  transition: transform 0.5s ease;
+}
+
+.carousel-card.zoom {
+  transform: scale(1.15);
+  z-index: 10;
+}
+
+/* Modal styling */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  margin: 2rem;
+  background-image: url("../../../public/modal-backdrop.png");
+  background-size: contain;
+  background-repeat: round;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  font-family: Zenmaru;
+
+  .text {
+	h1 {
+		margin:0;
+	}
+  }
+}

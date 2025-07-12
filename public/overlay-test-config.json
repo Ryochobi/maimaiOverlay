@@ -1,0 +1,79 @@
+{
+  "positions": {
+    "id": {
+      "x": 100,
+      "y": 100
+    },
+    "category": {
+      "x": 130,
+      "y": 130
+    },
+    "title": {
+      "x": 160,
+      "y": 160
+    },
+    "artist": {
+      "x": 190,
+      "y": 190
+    },
+    "bpm": {
+      "x": 220,
+      "y": 220
+    },
+    "imageName": {
+      "x": 250,
+      "y": 250
+    },
+    "version": {
+      "x": 280,
+      "y": 280
+    },
+    "isLocked": {
+      "x": 310,
+      "y": 310
+    },
+    "type": {
+      "x": 340,
+      "y": 340
+    },
+    "difficulty": {
+      "x": 370,
+      "y": 370
+    },
+    "level": {
+      "x": 400,
+      "y": 400
+    },
+    "internalLevel": {
+      "x": 430,
+      "y": 430
+    },
+    "internalLevelValue": {
+      "x": 460,
+      "y": 460
+    },
+    "noteDesigner": {
+      "x": 490,
+      "y": 490
+    },
+    "noteCounts": {
+      "x": 520,
+      "y": 520
+    },
+    "selectedSong": {
+      "x": 550,
+      "y": 550
+    },
+    "Player 1 Name": {
+      "x": 580,
+      "y": 580
+    },
+    "Player 2 Name": {
+      "x": 610,
+      "y": 610
+    }
+  },
+  "background": "https://forums.libretro.com/uploads/default/original/2X/7/747b6ad5c42603ab1a91c61692774552ab87b8b9.jpg",
+  "hiddenKeys": [],
+  "styles": {}
+}

@@ -1,29 +1,32 @@
-const WebSocket = require('ws');
-const { parse } = require('url');
+const { Server } = require("socket.io");
 
-const wss = new WebSocket.Server({ port: 8080 });
+const io = new Server(8080, {
+  cors: { origin: "*" } // optional, adjust if needed
+});
 
 let overlaySocket = null;
 
-wss.on('connection', function connection(ws, req) {
-  const pathname = parse(req.url).pathname;
+// Handle overlay connections
+io.of("/overlay").on("connection", (socket) => {
+  console.log("Overlay connected");
+  overlaySocket = socket;
 
-  if (pathname === '/overlay') {
-    overlaySocket = ws;
-    console.log('Overlay connected');
-  } else if (pathname === '/control') {
-    console.log('Control panel connected');
-
-    ws.on('message', function incoming(message) {
-      console.log('Control sent:', message.toString());
-      if (overlaySocket && overlaySocket.readyState === WebSocket.OPEN) {
-        overlaySocket.send(message.toString());
-      }
-    });
-  } else {
-    console.log(`Unknown route: ${pathname}`);
-    ws.close();
-  }
+  socket.on("disconnect", () => {
+    console.log("Overlay disconnected");
+    overlaySocket = null;
+  });
 });
 
-console.log('WebSocket server running on ws://localhost:8080');
+// Handle control panel connections
+io.of("/control").on("connection", (socket) => {
+  console.log("Control panel connected");
+
+  socket.on("control-message", (data) => {
+    console.log("Control sent:", data);
+    if (overlaySocket) {
+      overlaySocket.emit("overlay-update", data);
+    }
+  });
+});
+
+console.log("Socket.IO server running on ws://localhost:8080");

@@ -13,7 +13,8 @@ export default function OverlayControl() {
       <h1>🎛️ Overlay Control Panel</h1>
       <div className="control-actions">
         <Button onClick={() => goToPath('/playerView')}>Player View</Button>
-        <Button onClick={() => goToPath('/gameView')}>Game View</Button>
+        <Button onClick={() => goToPath('/twoPlayerView')}>Two Player View</Button>
+        <Button onClick={() => goToPath('/fourPlayerView')}>Four Player View</Button>
         <Button onClick={() => goToPath('/songView')}>Song View</Button>
         <Button onClick={() => goToPath('/totalScore')}>Total Score View</Button>
         <Button onClick={() => goToPath('/random')}>Randomizer View</Button>

@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFields, setCurrentSong, setSelectedSong1, setSelectedSong2, setSelectedSong3, setSelectedSong4, setWheelState, initializeSongs } from "./store/store";
 import PlayerView from "./components/overlays/PlayerView";
 import Randomizer from "./components/overlays/Randomizer";
-import Test from "./components/overlays/Randomizer";
+import TwoPlayerView from "./components/overlays/TwoPlayerView";
+import FourPlayerView from "./components/overlays/FourPlayerView";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -53,7 +54,8 @@ const shuffleArray = (array) => {
       <Routes>
         <Route path="/overlay" element={<OverlayControl />} />
         <Route path="/playerView" element={<PlayerView />} />
-        <Route path="/gameView" element={<PlayerView />} />
+        <Route path="/twoPlayerView" element={<TwoPlayerView />} />
+        <Route path="/fourPlayerView" element={<FourPlayerView />} />
         <Route path="/songView" element={<PlayerView />} />
         <Route path="/totalScore" element={<PlayerView />} />
         <Route path="/random" element={<Randomizer />} />

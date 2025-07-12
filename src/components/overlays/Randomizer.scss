@@ -1,23 +1,22 @@
-body {
-	background-image: url("../../../public/overlay/Background.png");
-	background-repeat: no-repeat;
-}
+// body {
+// 	background-image: url("../../../public/overlay/Background.png");
+// 	background-repeat: no-repeat;
+// }
 
 /* styles.css or in your component's style */
-@keyframes spinSlow {
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(360deg);
-	}
-}
-
 @font-face {
   font-family: Zenmaru;
   src: url('../../../public/fonts/zenmaru/ZenMaruGothic-Medium.ttf');
 }
+
+.randomizer-wrapper {
+ background-image: url('../../../public/overlay/Background.png'); /* Relative to the public/ folder */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+
 
 .roulette-container {
 	position: absolute;
@@ -143,4 +142,5 @@ carousel-card {
 		margin:0;
 	}
   }
+}
 }

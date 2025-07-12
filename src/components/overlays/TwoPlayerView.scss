@@ -1,0 +1,32 @@
+@font-face {
+  font-family: Helvetica-Now;
+  src: url('../../../public/fonts/helvetica-now/helveticanowtext-bold-demo.ttf');
+}
+
+
+.twoPlayer-container {
+  background-image: url('../../../public/overlay/TwoPlayerView.png'); /* Relative to the public/ folder */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+
+  .round-container {
+    display: flex;
+    position: fixed;
+    bottom: 4.5%;
+    left: 40%;
+    width: 300px;
+    margin-left: 2rem;
+    justify-content: center;
+
+
+    .round-text {
+    font-size: 2.5rem;
+    font-family: Helvetica-Now;
+    color: darkblue;
+    align-self: center;
+    }
+  }
+}

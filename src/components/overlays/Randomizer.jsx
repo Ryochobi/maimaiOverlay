@@ -12,10 +12,9 @@ const totalCardWidth = cardWidth + spacing;
 export default function Randomizer() {
   const randomizerState = useSelector((state) => state.randomizer);
   const rawX = useMotionValue(0);
-const smoothX = useSpring(rawX, { stiffness: 60, damping: 20 }); // adjust for feel
-const xRef = useRef(0); // manually tracked position
+  const smoothX = useSpring(rawX, { stiffness: 60, damping: 20 }); // adjust for feel
+  const xRef = useRef(0); // manually tracked position
 
-  const [xPos, setXPos] = useState(0);
   const [selected, setSelected] = useState(null);
   const [zoomIndex, setZoomIndex] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -115,7 +114,7 @@ const finalizeStop = () => {
   setZoomIndex(songs.length + trueIndex); // zoom into middle group
   setSelected(songs[trueIndex]);
 
-  setTimeout(() => setShowModal(true), 2000);
+  setTimeout(() => setShowModal(true), 2500);
 };
 
 

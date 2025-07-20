@@ -1,36 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Control.scss";
 import Button from "../fragment/Button";
 import FieldRow from "../fragment/FieldRow";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoryRow from "../fragment/CategoryRow";
-import { useSelector } from "react-redux";
 import maimaiFields from "../maimaiField.json";
-import config from "../config";
+import { useSocket } from "../providers/SocketProvider";
 
 export default function Control() {
-  const currentSong = useSelector((state) => state.songs.currentSong);
-  const song1 = useSelector((state) => state.songs.song1);
-  const song2 = useSelector((state) => state.songs.song2);
-  const song3 = useSelector((state) => state.songs.song3);
-  const song4 = useSelector((state) => state.songs.song4);
-
-
   const [fields, setFields] = useState(maimaiFields);
   const [values, setValues] = useState({});
-  const ws = new WebSocket(config.websocketUrl);
+  const socket = useSocket();
+
+useEffect(() => {
+  if (socket?.readyState === WebSocket.OPEN) {
+    console.log("Socket connected")
+  } else {
+    console.log("Socket status", socket?.readyState)
+  };
+}, [socket]);
 
   const sendUpdate = () => {
     const payload = {
       fields: values,
-      currentSong,
-      song1,
-      song2,
-      song3,
-      song4
+      // currentSong,
+      // song1,
+      // song2,
+      // song3,
+      // song4
     }
     console.log(payload)
-    ws.send(JSON.stringify(payload))
+    socket.send(JSON.stringify(payload))
   };
 
   const handleNameChange = (index, newName) => {
@@ -47,28 +47,8 @@ export default function Control() {
     setValues(updatedValues);
   };
 
-  const handleTypeChange = (index, newType) => {
-    const updated = [...fields];
-    updated[index].fieldType = newType;
-    setFields(updated);
-  };
-
-  const handleOptionsLoad = (index, options) => {
-    const updatedFields = [...fields];
-    updatedFields[index].options = options;
-    setFields(updatedFields);
-  };
-
   const handleValueChange = (name, newValue) => {
     setValues({ ...values, [name]: newValue });
-  };
-
-  const handleRemoveField = (index) => {
-    const updatedFields = fields.filter((_, i) => i !== index);
-    const updatedValues = { ...values };
-    delete updatedValues[fields[index].name];
-    setFields(updatedFields);
-    setValues(updatedValues);
   };
 
   const toggleEditCategory = (index) => {
@@ -135,9 +115,6 @@ export default function Control() {
                               value={values[field.name] || ""}
                               onNameChange={handleNameChange}
                               onValueChange={handleValueChange}
-                              onRemove={handleRemoveField}
-                              onTypeChange={handleTypeChange}
-                              onOptionsLoad={handleOptionsLoad}
                             />
                           ) : field.type === "category" ? (
                             <CategoryRow

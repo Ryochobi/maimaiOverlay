@@ -1,19 +1,17 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import config from "../config";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 import "./RandomizerField.scss";
 import Button from "./Button";
+import { useSocket } from "../providers/SocketProvider";
 
 const RandomizerField = () => {
   const songs = useSelector((state) => state.songs.songs);
   const [minLevel, setMinLevel] = useState("");
   const [maxLevel, setMaxLevel] = useState("");
-  const ws = new WebSocket(config.websocketUrl);
-
+  const socket = useSocket();
+  
   const initializeWheel = () => {
-    // Initializes randomizer wheel
-    // Sets state of wheel to "Ready"
     const songPayload = songs.filter(song => {
         const withinMin = minLevel === "" || song.values.internalLevelValue >= parseFloat(minLevel);
         const withinMax = maxLevel === "" || song.values.internalLevelValue <= parseFloat(maxLevel);
@@ -21,15 +19,15 @@ const RandomizerField = () => {
     })
 
     const payload = {songs: songPayload, state: "ready"}
-    ws.send(JSON.stringify(payload))
+    socket.send(JSON.stringify(payload))
   }
 
   const spinWheel = () => {
-    ws.send(JSON.stringify({state: "spin"}))
+    socket.send(JSON.stringify({state: "spin"}))
   }
 
   const stopWheel = () => {
-    ws.send(JSON.stringify({state: "stop"}))
+    socket.send(JSON.stringify({state: "stop"}))
   }
 
   return (
@@ -39,7 +37,6 @@ const RandomizerField = () => {
         <Button onClick={initializeWheel}>Initialize</Button>
         <Button onClick={spinWheel} className="primary">Spin</Button>
         <Button onClick={stopWheel} className="error">Stop</Button>
-        
       </div>
 
       {/* Filters */}

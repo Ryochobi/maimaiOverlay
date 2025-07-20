@@ -9,31 +9,6 @@
       "name": "round",
       "fieldType": "text"
     },
-     {
-      "type": "field",
-      "name": "currentSong",
-      "fieldType": "song"
-    },
-    {
-      "type": "field",
-      "name": "song1",
-      "fieldType": "song"
-    },
-     {
-      "type": "field",
-      "name": "song2",
-      "fieldType": "song"
-    },
-    {
-      "type": "field",
-      "name": "song3",
-      "fieldType": "song"
-    },
-    {
-      "type": "field",
-      "name": "song4",
-      "fieldType": "song"
-    },
     {
       "type": "category",
       "name": "Players",

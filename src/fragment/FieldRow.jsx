@@ -45,7 +45,7 @@ export default function FieldRow({
 
       {field.fieldType === "song" ? (
         <SongField onValueChange={handleValueInputChange} field={field}/>
-      ) : field.fieldType == "randomizer" ? (
+      ) : field.fieldType === "randomizer" ? (
         <RandomizerField onValueChange={handleValueInputChange} field={field}/>
       ) : (
         <input

@@ -19,7 +19,7 @@ const SongField = ({
 
   useEffect(() => {
     if (!songs) return;
-    if (query == '') {
+    if (query === '') {
       setShowSuggestions(false);
     }
 
@@ -41,22 +41,21 @@ const SongField = ({
         (song) => song.id === id
       );
       
-    if (field.name == "currentSong") {
+    if (field.name === "currentSong") {
       dispatch(setCurrentSong(selectedSong));
     }
-    if (field.name == "song1") {
+    if (field.name === "song1") {
       dispatch(setSelectedSong1(selectedSong));
     }
-    if (field.name == "song2") {
+    if (field.name === "song2") {
       dispatch(setSelectedSong2(selectedSong));
     }
-    if (field.name == "song3") {
+    if (field.name === "song3") {
       dispatch(setSelectedSong3(selectedSong));
     }
-    if (field.name == "song4") {
+    if (field.name === "song4") {
       dispatch(setSelectedSong4(selectedSong));
     }
-
   };
 
   return (

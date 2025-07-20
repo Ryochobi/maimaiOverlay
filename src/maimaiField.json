@@ -11,56 +11,6 @@
     },
     {
       "type": "category",
-      "name": "Players",
-      "isEditing": false
-    },
-    {
-      "type": "field",
-      "name": "p1Name",
-      "fieldType": "text"
-    },
-    {
-      "type": "field",
-      "name": "p2Name",
-      "fieldType": "text"
-    },
-    {
-      "type": "field",
-      "name": "p3Name",
-      "fieldType": "text"
-    },
-    {
-      "type": "field",
-      "name": "p4Name",
-      "fieldType": "text"
-    },
-    {
-      "type": "category",
-      "name": "Player Score",
-      "isEditing": false
-    },
-    {
-      "type": "field",
-      "name": "p1Score",
-      "fieldType": "text"
-    },
-    {
-      "type": "field",
-      "name": "p2Score",
-      "fieldType": "text"
-    },
-    {
-      "type": "field",
-      "name": "p3Score",
-      "fieldType": "text"
-    },
-    {
-      "type": "field",
-      "name": "p4Score",
-      "fieldType": "text"
-    },
-    {
-      "type": "category",
       "name": "Randomizer",
       "isEditing": false
     },
